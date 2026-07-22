@@ -6,8 +6,8 @@ import {
   IsUUID,
   Matches,
   MaxLength,
-  ValidateIf,
 } from 'class-validator';
+import { IsOptionalField } from '../common/decorators/optional-field.decorator';
 import { PageQueryDto } from '../common/dto/page-query.dto';
 import { TransactionStatus } from './transaction.entity';
 
@@ -22,13 +22,16 @@ export class TransactionQueryDto extends PageQueryDto {
 }
 
 export class UpdateTransactionDto {
-  @IsOptional() @ValidateIf((_object, value: unknown) => value !== null) @IsUUID() categoriaId?:
-    string | null;
-  @IsOptional()
-  @ValidateIf((_object, value: unknown) => value !== null)
+  @IsOptionalField({ nullable: true })
+  @IsUUID()
+  categoriaId?: string | null;
+
+  @IsOptionalField({ nullable: true })
   @IsString()
   @MaxLength(160)
   descricao?: string | null;
-  @IsOptional() @ValidateIf((_object, value: unknown) => value !== null) @IsUUID() creditCardId?:
-    string | null;
+
+  @IsOptionalField({ nullable: true })
+  @IsUUID()
+  creditCardId?: string | null;
 }

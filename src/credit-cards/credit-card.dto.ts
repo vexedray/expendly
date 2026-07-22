@@ -1,15 +1,6 @@
 import { Transform } from 'class-transformer';
-import {
-  IsBoolean,
-  IsEnum,
-  IsInt,
-  IsOptional,
-  IsString,
-  Length,
-  Max,
-  Min,
-  ValidateIf,
-} from 'class-validator';
+import { IsBoolean, IsEnum, IsInt, IsOptional, IsString, Length, Max, Min } from 'class-validator';
+import { IsOptionalField } from '../common/decorators/optional-field.decorator';
 import { PageQueryDto } from '../common/dto/page-query.dto';
 import { CreditCardType } from './credit-card.entity';
 
@@ -20,32 +11,32 @@ export class CreateCreditCardDto {
   nome!: string;
   @IsInt() @Min(1) @Max(31) diaFechamento!: number;
   @IsInt() @Min(1) @Max(31) diaVencimento!: number;
-  @ValidateIf((_object, value: unknown) => value !== undefined)
+  @IsOptionalField()
   @IsEnum(CreditCardType)
   tipo?: CreditCardType;
-  @ValidateIf((_object, value: unknown) => value !== undefined) @IsBoolean() ativo?: boolean;
+  @IsOptionalField() @IsBoolean() ativo?: boolean;
 }
 
 export class UpdateCreditCardDto {
-  @ValidateIf((_object, value: unknown) => value !== undefined)
+  @IsOptionalField()
   @Transform(({ value }: { value: unknown }) => (typeof value === 'string' ? value.trim() : value))
   @IsString()
   @Length(1, 80)
   nome?: string;
-  @ValidateIf((_object, value: unknown) => value !== undefined)
+  @IsOptionalField()
   @IsInt()
   @Min(1)
   @Max(31)
   diaFechamento?: number;
-  @ValidateIf((_object, value: unknown) => value !== undefined)
+  @IsOptionalField()
   @IsInt()
   @Min(1)
   @Max(31)
   diaVencimento?: number;
-  @ValidateIf((_object, value: unknown) => value !== undefined)
+  @IsOptionalField()
   @IsEnum(CreditCardType)
   tipo?: CreditCardType;
-  @ValidateIf((_object, value: unknown) => value !== undefined) @IsBoolean() ativo?: boolean;
+  @IsOptionalField() @IsBoolean() ativo?: boolean;
 }
 
 export class CreditCardQueryDto extends PageQueryDto {

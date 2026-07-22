@@ -1,13 +1,6 @@
 import { Transform } from 'class-transformer';
-import {
-  IsDateString,
-  IsEnum,
-  IsOptional,
-  IsString,
-  Length,
-  Matches,
-  ValidateIf,
-} from 'class-validator';
+import { IsDateString, IsEnum, IsOptional, IsString, Length, Matches } from 'class-validator';
+import { IsOptionalField } from '../common/decorators/optional-field.decorator';
 import { PageQueryDto } from '../common/dto/page-query.dto';
 import { IncomeRecurrence, IncomeType } from './income.entity';
 
@@ -26,19 +19,19 @@ export class CreateIncomeDto {
 }
 
 export class UpdateIncomeDto {
-  @ValidateIf((_object, value: unknown) => value !== undefined)
+  @IsOptionalField()
   @IsEnum(IncomeType)
   tipo?: IncomeType;
-  @ValidateIf((_object, value: unknown) => value !== undefined)
+  @IsOptionalField()
   @Transform(({ value }: { value: unknown }) => (typeof value === 'string' ? value.trim() : value))
   @IsString()
   @Length(1, 120)
   nome?: string;
-  @ValidateIf((_object, value: unknown) => value !== undefined) @Matches(MONEY) valor?: string;
-  @ValidateIf((_object, value: unknown) => value !== undefined)
+  @IsOptionalField() @Matches(MONEY) valor?: string;
+  @IsOptionalField()
   @IsEnum(IncomeRecurrence)
   recorrencia?: IncomeRecurrence;
-  @ValidateIf((_object, value: unknown) => value !== undefined)
+  @IsOptionalField()
   @Matches(DATE)
   @IsDateString({ strict: true })
   dataRecebimento?: string;
