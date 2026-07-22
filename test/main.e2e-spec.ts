@@ -23,7 +23,6 @@ describe('Main user flow (e2e)', () => {
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
     app = moduleRef.createNestApplication();
-    app.setGlobalPrefix('api/v1');
     app.useGlobalPipes(
       new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }),
     );
@@ -35,32 +34,32 @@ describe('Main user flow (e2e)', () => {
   afterAll(async () => app.close());
 
   it('registers, logs in, protects resources, creates resources and isolates users', async () => {
-    await request(server).get('/api/v1/users/me').expect(401);
+    await request(server).get('/users/me').expect(401);
     await request(server)
-      .post('/api/v1/auth/register')
+      .post('/auth/register')
       .send({ nome: 'Primeiro', email: first, senha: 'StrongPassword123!' })
       .expect(201);
     const login = await request(server)
-      .post('/api/v1/auth/login')
+      .post('/auth/login')
       .send({ email: first, senha: 'StrongPassword123!' })
       .expect(200);
     const tokens = login.body as Tokens;
     const auth = { Authorization: `Bearer ${tokens.accessToken}` };
-    await request(server).get('/api/v1/users/me').set(auth).expect(200);
+    await request(server).get('/users/me').set(auth).expect(200);
 
     const categoryResponse = await request(server)
-      .post('/api/v1/categories')
+      .post('/categories')
       .set(auth)
       .send({ nome: ' alimentação ' })
       .expect(201);
     const category = categoryResponse.body as Created;
     await request(server)
-      .post('/api/v1/credit-cards')
+      .post('/credit-cards')
       .set(auth)
       .send({ nome: 'Principal', diaFechamento: 5, diaVencimento: 12 })
       .expect(201);
     await request(server)
-      .post('/api/v1/income')
+      .post('/income')
       .set(auth)
       .send({
         tipo: 'SALARIO',
@@ -71,30 +70,27 @@ describe('Main user flow (e2e)', () => {
       })
       .expect(201);
     await request(server)
-      .post('/api/v1/fixed-bills')
+      .post('/fixed-bills')
       .set(auth)
       .send({ nome: 'Internet', valor: '120.00', diaVencimento: 10 })
       .expect(201);
-    await request(server).get('/api/v1/categories').set(auth).expect(200);
-    await request(server).get('/api/v1/credit-cards').set(auth).expect(200);
-    await request(server).get('/api/v1/income').set(auth).expect(200);
-    await request(server).get('/api/v1/fixed-bills').set(auth).expect(200);
+    await request(server).get('/categories').set(auth).expect(200);
+    await request(server).get('/credit-cards').set(auth).expect(200);
+    await request(server).get('/income').set(auth).expect(200);
+    await request(server).get('/fixed-bills').set(auth).expect(200);
 
     await request(server)
-      .post('/api/v1/auth/register')
+      .post('/auth/register')
       .send({ nome: 'Segundo', email: second, senha: 'StrongPassword123!' })
       .expect(201);
     const secondLogin = await request(server)
-      .post('/api/v1/auth/login')
+      .post('/auth/login')
       .send({ email: second, senha: 'StrongPassword123!' })
       .expect(200);
     const secondTokens = secondLogin.body as Tokens;
     const secondAuth = { Authorization: `Bearer ${secondTokens.accessToken}` };
-    await request(server).get(`/api/v1/categories/${category.id}`).set(secondAuth).expect(404);
-    const isolatedList = await request(server)
-      .get('/api/v1/categories')
-      .set(secondAuth)
-      .expect(200);
+    await request(server).get(`/categories/${category.id}`).set(secondAuth).expect(404);
+    const isolatedList = await request(server).get('/categories').set(secondAuth).expect(200);
     expect((isolatedList.body as Created[]).some((item) => item.id === category.id)).toBe(false);
   });
 });

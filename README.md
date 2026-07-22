@@ -15,9 +15,9 @@ npm run seed
 npm run start:dev
 ```
 
-- API: `http://localhost:3000/api/v1`
+- API: `http://localhost:3000`
 - Swagger em desenvolvimento: `http://localhost:3000/api/docs`
-- Health: `GET http://localhost:3000/api/v1/health`
+- Health: `GET http://localhost:3000/health`
 
 O banco é configurado por `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD` e `POSTGRES_DB`. `DATABASE_URL` é opcional e, quando definida, tem precedência. CORS usa `CORS_ORIGIN`, aceitando origens separadas por vírgula.
 
@@ -25,7 +25,7 @@ O banco é configurado por `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `P
 
 ### Registro
 
-`POST /api/v1/auth/register`
+`POST /auth/register`
 
 ```json
 { "nome": "Ana", "email": "ana@example.com", "senha": "SenhaForte123!" }
@@ -39,9 +39,9 @@ Retorna o usuário, sem senha e sem tokens:
 
 ### Login e refresh
 
-`POST /api/v1/auth/login` com `{ "email": "...", "senha": "..." }`.
+`POST /auth/login` com `{ "email": "...", "senha": "..." }`.
 
-`POST /api/v1/auth/refresh` com `{ "refreshToken": "..." }`.
+`POST /auth/refresh` com `{ "refreshToken": "..." }`.
 
 Ambos retornam:
 
@@ -49,7 +49,7 @@ Ambos retornam:
 { "accessToken": "...", "refreshToken": "...", "expiresIn": 900 }
 ```
 
-`POST /api/v1/auth/logout` é privado, exige Bearer access token e recebe `{ "refreshToken": "..." }`. O refresh token precisa pertencer ao usuário autenticado. Refresh tokens nunca são persistidos em texto puro: apenas hash bcrypt, expiração, revogação e `jti` são armazenados. Cada refresh efetua rotação transacional.
+`POST /auth/logout` é privado, exige Bearer access token e recebe `{ "refreshToken": "..." }`. O refresh token precisa pertencer ao usuário autenticado. Refresh tokens nunca são persistidos em texto puro: apenas hash bcrypt, expiração, revogação e `jti` são armazenados. Cada refresh efetua rotação transacional.
 
 ## Endpoints
 
@@ -123,7 +123,7 @@ Erros seguem:
   "error": "BAD_REQUEST",
   "message": ["campo inválido"],
   "timestamp": "2026-07-21T00:00:00.000Z",
-  "path": "/api/v1/recurso"
+  "path": "/recurso"
 }
 ```
 

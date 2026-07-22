@@ -11,7 +11,6 @@ async function bootstrap(): Promise<void> {
   const config = app.get(ConfigService);
   app.useLogger(app.get(Logger));
   app.use(helmet());
-  app.setGlobalPrefix('api/v1');
   app.enableCors({
     origin: config
       .getOrThrow<string>('CORS_ORIGIN')
