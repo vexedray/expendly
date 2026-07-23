@@ -22,28 +22,36 @@ import { ConnectToken } from './open-finance.provider';
 @Controller('open-finance')
 export class BankConnectionsController {
   constructor(private readonly service: BankConnectionsService) {}
-  @Post('connect-token') connectToken(@CurrentUser() user: AuthUser): Promise<ConnectToken> {
+
+  @Post('connect-token')
+  connectToken(@CurrentUser() user: AuthUser): Promise<ConnectToken> {
     return this.service.connectToken(user.id);
   }
-  @Post('items') create(
+
+  @Post('items')
+  create(
     @CurrentUser() user: AuthUser,
     @Body() dto: CreateBankConnectionDto,
   ): Promise<BankConnection> {
     return this.service.create(user.id, dto);
   }
-  @Get('items') list(@CurrentUser() user: AuthUser): Promise<BankConnection[]> {
+
+  @Get('items')
+  list(@CurrentUser() user: AuthUser): Promise<BankConnection[]> {
     return this.service.list(user.id);
   }
-  @Get('items/:id') get(
+
+  @Get('items/:id')
+  get(
     @CurrentUser() user: AuthUser,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<BankConnection> {
     return this.service.get(user.id, id);
   }
-  @Delete('items/:id') @HttpCode(HttpStatus.NO_CONTENT) disconnect(
-    @CurrentUser() user: AuthUser,
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<void> {
+
+  @Delete('items/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  disconnect(@CurrentUser() user: AuthUser, @Param('id', ParseUUIDPipe) id: string): Promise<void> {
     return this.service.disconnect(user.id, id);
   }
 }

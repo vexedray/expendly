@@ -8,13 +8,22 @@ import { User } from '../users/user.entity';
 @Check('CHK_fixed_bills_dia_vencimento', '"diaVencimento" BETWEEN 1 AND 31')
 @Check('CHK_fixed_bills_valor_positive', '"valor" > 0')
 export class FixedBill extends BaseEntity {
-  @Column({ type: 'uuid' }) userId!: string;
+  @Column({ type: 'uuid' })
+  userId!: string;
+
   @ManyToOne(() => User, (user) => user.fixedBills, { onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'userId' })
   user!: User;
-  @Column({ type: 'varchar', length: 120 }) nome!: string;
+
+  @Column({ type: 'varchar', length: 120 })
+  nome!: string;
+
   @Column({ type: 'numeric', precision: 14, scale: 2, transformer: numericTransformer })
   valor!: number;
-  @Column({ type: 'smallint' }) diaVencimento!: number;
-  @Column({ type: 'boolean', default: true }) ativo!: boolean;
+
+  @Column({ type: 'smallint' })
+  diaVencimento!: number;
+
+  @Column({ type: 'boolean', default: true })
+  ativo!: boolean;
 }

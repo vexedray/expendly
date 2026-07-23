@@ -9,12 +9,24 @@ export class CreateCreditCardDto {
   @IsString()
   @Length(1, 80)
   nome!: string;
-  @IsInt() @Min(1) @Max(31) diaFechamento!: number;
-  @IsInt() @Min(1) @Max(31) diaVencimento!: number;
+
+  @IsInt()
+  @Min(1)
+  @Max(31)
+  diaFechamento!: number;
+
+  @IsInt()
+  @Min(1)
+  @Max(31)
+  diaVencimento!: number;
+
   @IsOptionalField()
   @IsEnum(CreditCardType)
   tipo?: CreditCardType;
-  @IsOptionalField() @IsBoolean() ativo?: boolean;
+
+  @IsOptionalField()
+  @IsBoolean()
+  ativo?: boolean;
 }
 
 export class UpdateCreditCardDto {
@@ -23,20 +35,26 @@ export class UpdateCreditCardDto {
   @IsString()
   @Length(1, 80)
   nome?: string;
+
   @IsOptionalField()
   @IsInt()
   @Min(1)
   @Max(31)
   diaFechamento?: number;
+
   @IsOptionalField()
   @IsInt()
   @Min(1)
   @Max(31)
   diaVencimento?: number;
+
   @IsOptionalField()
   @IsEnum(CreditCardType)
   tipo?: CreditCardType;
-  @IsOptionalField() @IsBoolean() ativo?: boolean;
+
+  @IsOptionalField()
+  @IsBoolean()
+  ativo?: boolean;
 }
 
 export class CreditCardQueryDto extends PageQueryDto {
@@ -46,5 +64,8 @@ export class CreditCardQueryDto extends PageQueryDto {
   )
   @IsBoolean()
   ativo?: boolean;
-  @IsOptional() @IsEnum(CreditCardType) tipo?: CreditCardType;
+
+  @IsOptional()
+  @IsEnum(CreditCardType)
+  tipo?: CreditCardType;
 }

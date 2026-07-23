@@ -16,11 +16,16 @@ export enum BankConnectionStatus {
   where: `"status" <> 'DESCONECTADO'`,
 })
 export class BankConnection extends BaseEntity {
-  @Column({ type: 'uuid' }) userId!: string;
+  @Column({ type: 'uuid' })
+  userId!: string;
+
   @ManyToOne(() => User, (user) => user.bankConnections, { onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'userId' })
   user!: User;
-  @Column({ type: 'varchar', length: 255 }) pluggyItemId!: string;
+
+  @Column({ type: 'varchar', length: 255 })
+  pluggyItemId!: string;
+
   @Column({
     type: 'enum',
     enum: BankConnectionStatus,
@@ -28,5 +33,7 @@ export class BankConnection extends BaseEntity {
     default: BankConnectionStatus.PENDENTE,
   })
   status!: BankConnectionStatus;
-  @Column({ type: 'timestamptz', nullable: true }) lastSyncAt!: Date | null;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  lastSyncAt!: Date | null;
 }

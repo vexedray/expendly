@@ -1,17 +1,21 @@
-import { Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
+import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { createKeyv } from '@keyv/redis';
 import { LoggerModule } from 'nestjs-pino';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { BankConnectionsModule } from './bank-connections/bank-connections.module';
 import { CategoriesModule } from './categories/categories.module';
 import { GlobalExceptionFilter } from './common/http-exception.filter';
+import { CacheInvalidationInterceptor } from './common/interceptors/cache-invalidation.interceptor';
+import { RequestLoggingInterceptor } from './common/interceptors/request-logging.interceptor';
+import { UserCacheInterceptor } from './common/interceptors/user-cache.interceptor';
+import { PostgresConfigService } from './config/database.config';
 import { envValidationSchema } from './config/env.validation';
-import { databaseOptions } from './config/database.config';
 import { CreditCardsModule } from './credit-cards/credit-cards.module';
-import { entities } from './database/entities';
 import { FixedBillsModule } from './fixed-bills/fixed-bills.module';
 import { HealthModule } from './health/health.module';
 import { IncomesModule } from './incomes/incomes.module';
@@ -21,6 +25,18 @@ import { UsersModule } from './users/users.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, cache: true, validationSchema: envValidationSchema }),
+    CacheModule.registerAsync({
+      isGlobal: true,
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        stores: createKeyv(config.getOrThrow<string>('REDIS_URL'), {
+          namespace: 'expendly',
+          throwOnConnectError: true,
+          throwOnErrors: true,
+        }),
+        ttl: config.getOrThrow<number>('CACHE_TTL_MS'),
+      }),
+    }),
     LoggerModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
@@ -43,14 +59,7 @@ import { UsersModule } from './users/users.module';
         },
       }),
     }),
-    TypeOrmModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        ...databaseOptions(config),
-        entities,
-        migrationsRun: false,
-      }),
-    }),
+    TypeOrmModule.forRootAsync({ useClass: PostgresConfigService }),
     AuthModule,
     UsersModule,
     CategoriesModule,
@@ -64,6 +73,10 @@ import { UsersModule } from './users/users.module';
   providers: [
     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_FILTER, useClass: GlobalExceptionFilter },
+    { provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor },
+    { provide: APP_INTERCEPTOR, useClass: RequestLoggingInterceptor },
+    { provide: APP_INTERCEPTOR, useClass: CacheInvalidationInterceptor },
+    { provide: APP_INTERCEPTOR, useClass: UserCacheInterceptor },
   ],
 })
 export class AppModule {}

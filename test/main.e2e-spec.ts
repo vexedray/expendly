@@ -74,7 +74,10 @@ describe('Main user flow (e2e)', () => {
       .set(auth)
       .send({ nome: 'Internet', valor: '120.00', diaVencimento: 10 })
       .expect(201);
-    await request(server).get('/categories').set(auth).expect(200);
+    await request(server).get('/categories').set(auth).expect('X-Cache', 'MISS').expect(200);
+    await request(server).get('/categories').set(auth).expect('X-Cache', 'HIT').expect(200);
+    await request(server).post('/categories').set(auth).send({ nome: 'Transporte' }).expect(201);
+    await request(server).get('/categories').set(auth).expect('X-Cache', 'MISS').expect(200);
     await request(server).get('/credit-cards').set(auth).expect(200);
     await request(server).get('/income').set(auth).expect(200);
     await request(server).get('/fixed-bills').set(auth).expect(200);

@@ -14,11 +14,27 @@ import { TransactionStatus } from './transaction.entity';
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 export class TransactionQueryDto extends PageQueryDto {
-  @IsOptional() @IsUUID() categoriaId?: string;
-  @IsOptional() @IsUUID() creditCardId?: string;
-  @IsOptional() @IsEnum(TransactionStatus) status?: TransactionStatus;
-  @IsOptional() @Matches(DATE) @IsDateString({ strict: true }) dataInicio?: string;
-  @IsOptional() @Matches(DATE) @IsDateString({ strict: true }) dataFim?: string;
+  @IsOptional()
+  @IsUUID()
+  categoriaId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  creditCardId?: string;
+
+  @IsOptional()
+  @IsEnum(TransactionStatus)
+  status?: TransactionStatus;
+
+  @IsOptional()
+  @Matches(DATE)
+  @IsDateString({ strict: true })
+  dataInicio?: string;
+
+  @IsOptional()
+  @Matches(DATE)
+  @IsDateString({ strict: true })
+  dataFim?: string;
 }
 
 export class UpdateTransactionDto {

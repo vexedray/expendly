@@ -9,7 +9,7 @@ Requisitos: Node.js 22+, npm 10+ e Docker com Compose.
 ```bash
 cp .env.example .env
 npm install
-docker compose up -d postgres
+docker compose up -d
 npm run migration:run
 npm run seed
 npm run start:dev
@@ -18,8 +18,9 @@ npm run start:dev
 - API: `http://localhost:3000`
 - Swagger em desenvolvimento: `http://localhost:3000/api/docs`
 - Health: `GET http://localhost:3000/health`
+- pgAdmin: `http://localhost:8081`
 
-O banco é configurado por `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD` e `POSTGRES_DB`. `DATABASE_URL` é opcional e, quando definida, tem precedência. CORS usa `CORS_ORIGIN`, aceitando origens separadas por vírgula.
+O banco é configurado por `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD` e `POSTGRES_DB`. `DATABASE_URL` é opcional e, quando definida, tem precedência. Redis usa `REDIS_URL`, e `CACHE_TTL_MS` define o TTL em milissegundos. CORS usa `CORS_ORIGIN`, aceitando origens separadas por vírgula.
 
 ## Autenticação
 
@@ -152,3 +153,20 @@ npm run test:e2e
 ```
 
 Logs Pino são estruturados e removem senha, refresh token e autorização. Eventos de autenticação, atualização e CRUD registram apenas identificadores não sensíveis.
+
+## Padrão arquitetural
+
+O backend é organizado por domínio. Cada módulo contém controller, service, DTOs, entity e configuração de módulo. Controllers recebem e validam dados; regras de negócio e autorização permanecem nos services; repositories do TypeORM são injetados diretamente, sem uma camada de repository artificial.
+
+Recursos compartilhados ficam em `src/common`, configuração em `src/config` e migrations/DataSource CLI em `src/database`. O módulo raiz registra globalmente:
+
+- `ValidationPipe` com transformação, whitelist e rejeição de campos desconhecidos.
+- Filtro padronizado de exceções.
+- Guard JWT do Passport com access e refresh tokens rotativos.
+- `ClassSerializerInterceptor` para processar `@Exclude()`.
+- Interceptor estruturado de logs com Pino e RxJS.
+- Cache Redis por interceptor, segregado pelo ID do usuário e URL da requisição.
+
+O Redis armazena somente respostas de requisições `GET` autenticadas durante o TTL configurado. A chave segue `http:<userId>:<version>:<url>`, evitando compartilhamento de cache entre usuários. Escritas atualizam a versão do usuário e invalidam imediatamente suas leituras anteriores. Senhas, tokens e rotas de escrita não são armazenados no cache.
+
+O `PostgresConfigService` implementa `TypeOrmOptionsFactory`. A aplicação mantém `synchronize: false`; o DataSource separado em `src/database/data-source.ts` é utilizado exclusivamente pela CLI de migrations.

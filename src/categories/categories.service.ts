@@ -74,11 +74,13 @@ export class CategoriesService {
   private normalize(nome: string): string {
     return nome.trim().toUpperCase();
   }
+
   private isDuplicate(error: unknown): boolean {
     return (
       error instanceof QueryFailedError && (error.driverError as { code?: string }).code === '23505'
     );
   }
+
   private isForeignKeyViolation(error: unknown): boolean {
     return (
       error instanceof QueryFailedError && (error.driverError as { code?: string }).code === '23503'

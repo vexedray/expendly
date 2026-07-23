@@ -28,14 +28,17 @@ export class UnsupportedOpenFinanceProvider implements OpenFinanceProvider {
     void _userId;
     throw new NotImplementedException('Provider Open Finance não configurado');
   }
+
   getItem(_itemId: string): Promise<OpenFinanceItem> {
     void _itemId;
     throw new NotImplementedException('Provider Open Finance não configurado');
   }
+
   getTransactions(_itemId: string): Promise<OpenFinanceTransaction[]> {
     void _itemId;
     throw new NotImplementedException('Provider Open Finance não configurado');
   }
+
   deleteItem(_itemId: string): Promise<void> {
     void _itemId;
     throw new NotImplementedException('Provider Open Finance não configurado');

@@ -9,9 +9,18 @@ export class CreateFixedBillDto {
   @IsString()
   @Length(1, 120)
   nome!: string;
-  @Matches(MONEY) valor!: string;
-  @IsInt() @Min(1) @Max(31) diaVencimento!: number;
-  @IsOptionalField() @IsBoolean() ativo?: boolean;
+
+  @Matches(MONEY)
+  valor!: string;
+
+  @IsInt()
+  @Min(1)
+  @Max(31)
+  diaVencimento!: number;
+
+  @IsOptionalField()
+  @IsBoolean()
+  ativo?: boolean;
 }
 
 export class UpdateFixedBillDto {
@@ -20,13 +29,20 @@ export class UpdateFixedBillDto {
   @IsString()
   @Length(1, 120)
   nome?: string;
-  @IsOptionalField() @Matches(MONEY) valor?: string;
+
+  @IsOptionalField()
+  @Matches(MONEY)
+  valor?: string;
+
   @IsOptionalField()
   @IsInt()
   @Min(1)
   @Max(31)
   diaVencimento?: number;
-  @IsOptionalField() @IsBoolean() ativo?: boolean;
+
+  @IsOptionalField()
+  @IsBoolean()
+  ativo?: boolean;
 }
 
 export class FixedBillQueryDto extends PageQueryDto {

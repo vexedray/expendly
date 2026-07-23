@@ -23,29 +23,34 @@ import { FixedBillsService } from './fixed-bills.service';
 @Controller('fixed-bills')
 export class FixedBillsController {
   constructor(private readonly service: FixedBillsService) {}
-  @Post() create(@CurrentUser() u: AuthUser, @Body() d: CreateFixedBillDto): Promise<FixedBill> {
+
+  @Post()
+  create(@CurrentUser() u: AuthUser, @Body() d: CreateFixedBillDto): Promise<FixedBill> {
     return this.service.create(u.id, d);
   }
-  @Get() list(@CurrentUser() u: AuthUser, @Query() q: FixedBillQueryDto): Promise<Page<FixedBill>> {
+
+  @Get()
+  list(@CurrentUser() u: AuthUser, @Query() q: FixedBillQueryDto): Promise<Page<FixedBill>> {
     return this.service.list(u.id, q);
   }
-  @Get(':id') get(
-    @CurrentUser() u: AuthUser,
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<FixedBill> {
+
+  @Get(':id')
+  get(@CurrentUser() u: AuthUser, @Param('id', ParseUUIDPipe) id: string): Promise<FixedBill> {
     return this.service.get(u.id, id);
   }
-  @Patch(':id') update(
+
+  @Patch(':id')
+  update(
     @CurrentUser() u: AuthUser,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() d: UpdateFixedBillDto,
   ): Promise<FixedBill> {
     return this.service.update(u.id, id, d);
   }
-  @Delete(':id') @HttpCode(HttpStatus.NO_CONTENT) remove(
-    @CurrentUser() u: AuthUser,
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<void> {
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  remove(@CurrentUser() u: AuthUser, @Param('id', ParseUUIDPipe) id: string): Promise<void> {
     return this.service.remove(u.id, id);
   }
 }

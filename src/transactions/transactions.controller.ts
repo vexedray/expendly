@@ -11,19 +11,19 @@ import { TransactionsService } from './transactions.service';
 @Controller('transactions')
 export class TransactionsController {
   constructor(private readonly service: TransactionsService) {}
-  @Get() list(
-    @CurrentUser() u: AuthUser,
-    @Query() q: TransactionQueryDto,
-  ): Promise<Page<Transaction>> {
+
+  @Get()
+  list(@CurrentUser() u: AuthUser, @Query() q: TransactionQueryDto): Promise<Page<Transaction>> {
     return this.service.list(u.id, q);
   }
-  @Get(':id') get(
-    @CurrentUser() u: AuthUser,
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<Transaction> {
+
+  @Get(':id')
+  get(@CurrentUser() u: AuthUser, @Param('id', ParseUUIDPipe) id: string): Promise<Transaction> {
     return this.service.get(u.id, id);
   }
-  @Patch(':id') update(
+
+  @Patch(':id')
+  update(
     @CurrentUser() u: AuthUser,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() d: UpdateTransactionDto,

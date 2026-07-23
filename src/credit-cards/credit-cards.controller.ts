@@ -23,32 +23,34 @@ import { CreditCardsService } from './credit-cards.service';
 @Controller('credit-cards')
 export class CreditCardsController {
   constructor(private readonly service: CreditCardsService) {}
-  @Post() create(@CurrentUser() u: AuthUser, @Body() d: CreateCreditCardDto): Promise<CreditCard> {
+
+  @Post()
+  create(@CurrentUser() u: AuthUser, @Body() d: CreateCreditCardDto): Promise<CreditCard> {
     return this.service.create(u.id, d);
   }
-  @Get() list(
-    @CurrentUser() u: AuthUser,
-    @Query() q: CreditCardQueryDto,
-  ): Promise<Page<CreditCard>> {
+
+  @Get()
+  list(@CurrentUser() u: AuthUser, @Query() q: CreditCardQueryDto): Promise<Page<CreditCard>> {
     return this.service.list(u.id, q);
   }
-  @Get(':id') get(
-    @CurrentUser() u: AuthUser,
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<CreditCard> {
+
+  @Get(':id')
+  get(@CurrentUser() u: AuthUser, @Param('id', ParseUUIDPipe) id: string): Promise<CreditCard> {
     return this.service.get(u.id, id);
   }
-  @Patch(':id') update(
+
+  @Patch(':id')
+  update(
     @CurrentUser() u: AuthUser,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() d: UpdateCreditCardDto,
   ): Promise<CreditCard> {
     return this.service.update(u.id, id, d);
   }
-  @Delete(':id') @HttpCode(HttpStatus.NO_CONTENT) remove(
-    @CurrentUser() u: AuthUser,
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<void> {
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  remove(@CurrentUser() u: AuthUser, @Param('id', ParseUUIDPipe) id: string): Promise<void> {
     return this.service.remove(u.id, id);
   }
 }

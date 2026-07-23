@@ -14,23 +14,39 @@ export enum TransactionStatus {
 @Index('IDX_transactions_bank_data', ['bankConnectionId', 'data'])
 @Index('IDX_transactions_categoria', ['categoriaId'])
 export class Transaction extends BaseEntity {
-  @Column({ type: 'uuid' }) bankConnectionId!: string;
+  @Column({ type: 'uuid' })
+  bankConnectionId!: string;
+
   @ManyToOne(() => BankConnection, { onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'bankConnectionId' })
   bankConnection!: BankConnection;
-  @Column({ type: 'uuid', nullable: true }) categoriaId!: string | null;
+
+  @Column({ type: 'uuid', nullable: true })
+  categoriaId!: string | null;
+
   @ManyToOne(() => Category, { nullable: true, onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'categoriaId' })
   categoria!: Category | null;
-  @Column({ type: 'uuid', nullable: true }) creditCardId!: string | null;
+
+  @Column({ type: 'uuid', nullable: true })
+  creditCardId!: string | null;
+
   @ManyToOne(() => CreditCard, { nullable: true, onDelete: 'RESTRICT' })
   @JoinColumn({ name: 'creditCardId' })
   creditCard!: CreditCard | null;
-  @Column({ type: 'varchar', length: 160 }) nomeOriginal!: string;
-  @Column({ type: 'varchar', length: 160, nullable: true }) descricao!: string | null;
+
+  @Column({ type: 'varchar', length: 160 })
+  nomeOriginal!: string;
+
+  @Column({ type: 'varchar', length: 160, nullable: true })
+  descricao!: string | null;
+
   @Column({ type: 'numeric', precision: 14, scale: 2, transformer: numericTransformer })
   valor!: number;
-  @Column({ type: 'date' }) data!: string;
+
+  @Column({ type: 'date' })
+  data!: string;
+
   @Column({
     type: 'enum',
     enum: TransactionStatus,

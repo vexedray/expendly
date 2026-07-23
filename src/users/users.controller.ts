@@ -11,13 +11,14 @@ import { UsersService } from './users.service';
 @Controller('users')
 export class UsersController {
   constructor(private readonly users: UsersService) {}
-  @Get('me') me(@CurrentUser() auth: AuthUser): Promise<PublicUser> {
+
+  @Get('me')
+  me(@CurrentUser() auth: AuthUser): Promise<PublicUser> {
     return this.users.me(auth.id);
   }
-  @Patch('me') update(
-    @CurrentUser() auth: AuthUser,
-    @Body() dto: UpdateMeDto,
-  ): Promise<PublicUser> {
+
+  @Patch('me')
+  update(@CurrentUser() auth: AuthUser, @Body() dto: UpdateMeDto): Promise<PublicUser> {
     return this.users.update(auth.id, dto);
   }
 }
